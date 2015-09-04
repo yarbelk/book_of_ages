@@ -1,0 +1,4 @@
+github.com/mattn/go-sqlite3 #897b8800a7d1a93518b87c00e5d1c5d7476f3701
+github.com/onsi/ginkgo/ginkgo #1b59c57df76ede42c08590546916e6a18685857d
+github.com/onsi/gomega #6331bf5a5b5e7a832348789eb3cedff7a6917103
+github.com/voxelbrain/goptions #68583de33d9209ba795a0a334dad27418e4c18f5

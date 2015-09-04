@@ -22,3 +22,8 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+.vendor/
+
+*.sqlite3
+book_of_ages
