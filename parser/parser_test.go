@@ -24,7 +24,10 @@ inputXML=`<?xmlversion="1.0"encoding='UTF-8'?>
 <region><id>1</id><name>the sunny sea</name><type>Ocean</type></region>
 <region><id>2</id><name>the shadowy sea</name><type>Ocean</type></region>
 </regions>
-<underground_regions><underground_region><id>0</id><type>cavern</type><depth>1</depth></underground_region> </underground_regions>
+<underground_regions>
+<underground_region><id>0</id><type>cavern</type><depth>1</depth></underground_region>
+<underground_region><id>1</id><type>cavern</type><depth>1</depth></underground_region>
+</underground_regions>
 </df_world>`
 		world = World{Name:"Test World", Id: 0}
 		reader = strings.NewReader(inputXML)

@@ -22,6 +22,9 @@ func Parse(world *World, inputXML io.Reader) {
 			if startElement.Name.Local == "regions" {
 				parseRegion(decoder)
 			}
+			if startElement.Name.Local == "underground_regions" {
+				parseUndergroundRegion(decoder)
+			}
 		}
 	}
 }
@@ -40,6 +43,24 @@ func parseRegion(decoder *xml.Decoder) {
 					r := Region{}
 					decoder.DecodeElement(&r, &startElement)
 					fmt.Printf("%v \n", r)
+				}
+			}
+	}
+}
+
+func parseUndergroundRegion(decoder *xml.Decoder) {
+	for {
+		token, _ := decoder.Token()
+		switch startElement := token.(type) {
+			case xml.EndElement:
+				if startElement.Name.Local == "underground_regions" {
+					return
+				}
+			case xml.StartElement:
+				if startElement.Name.Local == "underground_region" {
+					ur := UndergroundRegion{}
+					decoder.DecodeElement(&ur, &startElement)
+					fmt.Printf("%v \n", ur)
 				}
 			}
 	}
