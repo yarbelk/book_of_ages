@@ -18,29 +18,20 @@ var _ = Describe("Parser", func() {
 
 	Context("world regions and sites", func() {
 		BeforeEach(func() {
-			inputXML = `<?xml version="1.0" encoding='UTF-8'?>
+inputXML=`<?xmlversion="1.0"encoding='UTF-8'?>
 <df_world>
-	<regions>
-		<region>
-			<id>1</id>
-			<name>the sunny sea</name>
-			<type>Ocean</type>
-		</region>
-	</regions>
-	<underground_regions>
-		<underground_region>
-			<id>0</id>
-			<type>cavern</type>
-			<depth>1</depth>
-		</underground_region>
-	</underground_regions>
+<regions>
+<region><id>1</id><name>the sunny sea</name><type>Ocean</type></region>
+<region><id>2</id><name>the shadowy sea</name><type>Ocean</type></region>
+</regions>
+<underground_regions><underground_region><id>0</id><type>cavern</type><depth>1</depth></underground_region> </underground_regions>
 </df_world>`
 		world = World{Name:"Test World", Id: 0}
 		reader = strings.NewReader(inputXML)
 		})
 
 		It("should populate regions", func() {
-			Parse(&world, []byte(inputXML))
+			Parse(&world, reader)
 			Expect(len(world.RegionList.Regions)).To(Equal(1))
 			region := world.RegionList.Regions[0]
 			Expect(region.Id).To(Equal(1))
@@ -49,7 +40,7 @@ var _ = Describe("Parser", func() {
 		})
 
 		It("should populate underground regions", func() {
-			Parse(&world, []byte(inputXML))
+			Parse(&world, reader)
 			Expect(len(world.UndergroundRegionList.UndergroundRegions)).To(Equal(1))
 			region := world.UndergroundRegionList.UndergroundRegions[0]
 			Expect(region.Id).To(Equal(0))
