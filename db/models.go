@@ -2,6 +2,8 @@ package db
 
 import (
 	"encoding/xml"
+	"errors"
+	"fmt"
 )
 
 
@@ -68,4 +70,44 @@ type World struct {
 	UndergroundRegionList UndergroundRegionList `xml:"underground_regions"`
 	SiteList []Site `xml:"sites"`
 	ArtifactList []Artifact `xml:"artifacts"`
+}
+
+type Modeler interface {
+	Decode(decoder xml.Decoder) error
+	Save()
+	Value() interface{}
+}
+
+
+func (region *Region) Decode(decoder *xml.Decoder) error {
+	token, err := decoder.Token()
+	if err != nil {
+		fmt.Printf("%s\n", err.Error())
+		return err
+	}
+	switch startElement := token.(type) {
+		case xml.EndElement:
+			if startElement.Name.Local == "regions" {
+				return errors.New("end of stream")
+			}
+		case xml.StartElement:
+			if startElement.Name.Local == "region" {
+				decoder.DecodeElement(region, &startElement)
+				fmt.Printf("%v \n", region)
+				return nil
+			} else {
+			return errors.New("Wrong Tag Type")
+			}
+		default:
+			return errors.New("Wrong Tag Type")
+	 }
+	return nil
+}
+
+func (region *Region) Save() (err error) {
+	return
+}
+
+func (region *Region) Value() (interface {}) {
+	return region
 }

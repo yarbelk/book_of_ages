@@ -32,19 +32,15 @@ func Parse(world *World, inputXML io.Reader) {
 
 func parseRegion(decoder *xml.Decoder) {
 	for {
-		token, _ := decoder.Token()
-		switch startElement := token.(type) {
-			case xml.EndElement:
-				if startElement.Name.Local == "regions" {
-					return
-				}
-			case xml.StartElement:
-				if startElement.Name.Local == "region" {
-					r := Region{}
-					decoder.DecodeElement(&r, &startElement)
-					fmt.Printf("%v \n", r)
-				}
+		var err error
+		var region *Region = &Region{}
+		err = region.Decode(decoder)
+		if err != nil {
+			if err.Error() == "Wrong Tag Type" {
+				continue
 			}
+			return
+		}
 	}
 }
 
