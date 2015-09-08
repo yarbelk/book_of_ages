@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	. "github.com/yarbelk/book_of_ages/db"
 	"io"
-	"fmt"
 )
 
 
@@ -46,18 +45,14 @@ func parseRegion(decoder *xml.Decoder) {
 
 func parseUndergroundRegion(decoder *xml.Decoder) {
 	for {
-		token, _ := decoder.Token()
-		switch startElement := token.(type) {
-			case xml.EndElement:
-				if startElement.Name.Local == "underground_regions" {
-					return
-				}
-			case xml.StartElement:
-				if startElement.Name.Local == "underground_region" {
-					ur := UndergroundRegion{}
-					decoder.DecodeElement(&ur, &startElement)
-					fmt.Printf("%v \n", ur)
-				}
+		var err error
+		var underground_region *UndergroundRegion = &UndergroundRegion{}
+		err = underground_region.Decode(decoder)
+		if err != nil {
+			if err.Error() == "Wrong Tag Type" {
+				continue
 			}
+			return
+		}
 	}
 }

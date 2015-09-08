@@ -3,61 +3,39 @@ package db
 
 import (
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/jmoiron/sqlx"
-	"log"
+	_ "github.com/jmoiron/sqlx"
+	"github.com/rubenv/sql-migrate"
+	"database/sql"
+	"fmt"
 )
 
+var Database string = "db/boa.db"
+var Migrations string = "db/migrations"
 
-var initial_schema = `
-CREATE TABLE IF NOT EXISTS worlds (
-	id INT PRIMARY KEY,
-	name TEXT
-);
+var Env string = ""
 
-CREATE TABLE IF NOT EXISTS regions (
-	id INT,
-	world_id INT,
-	name TEXT,
-	type TEXT,
-	PRIMARY KEY(id, world_id),
-	FOREIGN KEY(world_id) REFERENCES worlds(id)
-);
+func RunMigrations() {
+	if Env == "" {
+		Env = "development"
+	}
+	migrations := migrate.FileMigrationSource{
+		Dir: Migrations,
+	}
 
-CREATE TABLE IF NOT EXISTS underground_regions (
-	id INT,
-	world_id INT,
-	name TEXT,
-	type TEXT,
-	PRIMARY KEY(id, world_id),
-	FOREIGN KEY(world_id) REFERENCES worlds(id)
-);
+	db, err := sql.Open("sqlite3", Database)
+	defer func() {
+		db.Close()
+	}()
 
-CREATE TABLE IF NOT EXISTS sites (
-	id INT,
-	world_id INT,
-	name TEXT,
-	x_coord INT,
-	y_coord INT,
-	PRIMARY KEY(id, world_id),
-	FOREIGN KEY(world_id) REFERENCES worlds(id)
-);
+	if err != nil {
+		panic("Failed to open DB")
+	}
 
+	n, err := migrate.Exec(db, "sqlite3", migrations, migrate.Up)
 
-CREATE TABLE IF NOT EXISTS artifacts (
-	id INT,
-	world_id INT,
-	name TEXT,
-	item TEXT,
-	PRIMARY KEY(id, world_id),
-	FOREIGN KEY(world_id) REFERENCES worlds(id)
-);
-`
+	if err != nil {
+		panic("Failed to open DB")
+	}
 
-func CreateTables() {
-	connection, err := sqlx.Connect("sqlite3", "book_of_ages.sqlite3")
-    if err != nil {
-        log.Fatalln(err)
-    }
-
-	connection.MustExec(initial_schema)
+	fmt.Printf("Migrated %d\n", n)
 }

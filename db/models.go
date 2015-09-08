@@ -5,8 +5,6 @@ import (
 	"errors"
 	"fmt"
 )
-
-
 /*
 Tables are:
 
@@ -45,6 +43,7 @@ type Site struct {
 	Coords string `xml:"coords"`
 	X_coord int `db:"x_coord"`
 	Y_coord int `db:"y_coord"`
+	Type string `xml:"type"`
 }
 
 type Artifact struct {
@@ -54,32 +53,22 @@ type Artifact struct {
 	Item string `xml:"item" db:"item"`
 }
 
-type RegionList struct {
-	Regions []Region `xml:"region"`
-}
-
-type UndergroundRegionList struct {
-	UndergroundRegions []UndergroundRegion `xml:"underground_region"`
-}
-
 type World struct {
 	XMLName xml.Name `xml:"df_world"`
 	Id int `db:"id"`
 	Name string `db:"name"`
-	RegionList RegionList `xml:"regions"`
-	UndergroundRegionList UndergroundRegionList `xml:"underground_regions"`
+	Regions []Region
+	UndergroundRegions []UndergroundRegion
 	SiteList []Site `xml:"sites"`
 	ArtifactList []Artifact `xml:"artifacts"`
 }
 
 type Modeler interface {
-	Decode(decoder xml.Decoder) error
-	Save()
+	Decode(decoder *xml.Decoder) error
 	Value() interface{}
 }
 
-
-func (region *Region) Decode(decoder *xml.Decoder) error {
+func decodeXml(decoder *xml.Decoder, model Modeler, parent_tag, tag string) error {
 	token, err := decoder.Token()
 	if err != nil {
 		fmt.Printf("%s\n", err.Error())
@@ -87,13 +76,12 @@ func (region *Region) Decode(decoder *xml.Decoder) error {
 	}
 	switch startElement := token.(type) {
 		case xml.EndElement:
-			if startElement.Name.Local == "regions" {
+			if startElement.Name.Local == parent_tag {
 				return errors.New("end of stream")
 			}
 		case xml.StartElement:
-			if startElement.Name.Local == "region" {
-				decoder.DecodeElement(region, &startElement)
-				fmt.Printf("%v \n", region)
+			if startElement.Name.Local == tag {
+				decoder.DecodeElement(model, &startElement)
 				return nil
 			} else {
 			return errors.New("Wrong Tag Type")
@@ -104,10 +92,35 @@ func (region *Region) Decode(decoder *xml.Decoder) error {
 	return nil
 }
 
-func (region *Region) Save() (err error) {
-	return
+
+func (region *Region) Decode(decoder *xml.Decoder) error {
+	return decodeXml(decoder, region, "regions", "region")
 }
 
 func (region *Region) Value() (interface {}) {
 	return region
+}
+
+func (underground_region *UndergroundRegion) Decode(decoder *xml.Decoder) error {
+	return decodeXml(decoder, underground_region, "underground_regions", "underground_region")
+}
+
+func (underground_region *UndergroundRegion) Value() (interface {}) {
+	return underground_region
+}
+
+func (site *Site) Decode(decoder *xml.Decoder) error {
+	return decodeXml(decoder, site, "sites", "site")
+}
+
+func (site *Site) Value() (interface {}) {
+	return site
+}
+
+func (artifact *Artifact) Decode(decoder *xml.Decoder) error {
+	return decodeXml(decoder, artifact, "artifacts", "artifact")
+}
+
+func (artifact *Artifact) Value() (interface {}) {
+	return artifact
 }

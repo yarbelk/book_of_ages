@@ -1,0 +1,14 @@
+test:
+  dialect: sqlite3
+  datasource: ":memory:"
+  dir: db/migrations
+
+production:
+  dialect: sqlite3
+  datasource: $HOME/.boa/boa.db
+  dir: db/migrations
+
+development:
+  dialect: sqlite3
+  datasource: db/boa.db
+  dir: db/migrations
