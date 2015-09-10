@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"strings"
+	"strconv"
 )
 /*
 Tables are:
@@ -57,6 +59,7 @@ type World struct {
 	XMLName xml.Name `xml:"df_world"`
 	Id int `db:"id"`
 	Name string `db:"name"`
+	TranslatedName string `db:"translated_name"`
 	Regions []Region
 	UndergroundRegions []UndergroundRegion
 	SiteList []Site `xml:"sites"`
@@ -110,7 +113,15 @@ func (underground_region *UndergroundRegion) Value() (interface {}) {
 }
 
 func (site *Site) Decode(decoder *xml.Decoder) error {
-	return decodeXml(decoder, site, "sites", "site")
+	err := decodeXml(decoder, site, "sites", "site")
+	if err != nil {
+		return err
+	}
+
+	coords := strings.Split(site.Coords, ",")
+	site.X_coord, _ = strconv.Atoi(coords[0])
+	site.Y_coord, _ = strconv.Atoi(coords[1])
+	return nil
 }
 
 func (site *Site) Value() (interface {}) {

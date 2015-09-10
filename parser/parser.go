@@ -4,6 +4,8 @@ import (
 	"encoding/xml"
 	. "github.com/yarbelk/book_of_ages/db"
 	"io"
+	"bufio"
+	"strings"
 )
 
 
@@ -56,3 +58,21 @@ func parseUndergroundRegion(decoder *xml.Decoder) {
 		}
 	}
 }
+
+// I hate unstructured text.
+func ParseWorldHistory(world *World, inputHistory io.Reader) (err error) {
+	buf := bufio.NewReader(inputHistory)
+	return parserWorldName(world, buf)
+}
+
+
+func parserWorldName(world *World, buf *bufio.Reader) (err error) {
+	var name, translated_name string
+	name, err = buf.ReadString('\n')
+	if err != nil { return }
+	translated_name, err = buf.ReadString('\n')
+	if err != nil { return }
+	world.Name = strings.TrimSpace(name)
+	world.TranslatedName = strings.TrimSpace(translated_name)
+	return
+	}

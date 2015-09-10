@@ -1,7 +1,7 @@
 package parser_test
 
 import (
-	_ "github.com/yarbelk/book_of_ages/parser"
+	"github.com/yarbelk/book_of_ages/parser"
 	. "github.com/yarbelk/book_of_ages/db"
 
 	. "github.com/onsi/ginkgo"
@@ -49,5 +49,44 @@ var _ = Describe("Parser", func() {
 			Expect(site.Y_coord).To(Equal(174))
 			Expect(site.Type).To(Equal("cave"))
 		})
+
+		It("should populate artifacts", func() {
+			artifact_string := "<artifact> <id>8</id> <name>the doomed stench</name> <item>okbodaztong</item> </artifact>"
+			reader = strings.NewReader(artifact_string)
+			artifact := Artifact{}
+			decoder := xml.NewDecoder(reader)
+			artifact.Decode(decoder)
+			Expect(artifact.Id).To(Equal(8))
+			Expect(artifact.Name).To(Equal("the doomed stench"))
+			Expect(artifact.Item).To(Equal("okbodaztong"))
+
+		})
+	})
+
+	Context("world gen history txt file", func() {
+		var (
+			world_history string = `Otstuxsmata
+The Cyclopean Realms
+
+Cave fish men
+Antmen
+Serpent men
+Rodent men
+Amphibian men
+Olm men
+Reptile men`
+			world *World
+			reader *strings.Reader
+		)
+		It("Should get the world name from the history file", func() {
+			world = &World{}
+			reader = strings.NewReader(world_history)
+			parser.ParseWorldHistory(world, reader)
+
+			Expect(world.Name).To(Equal("Otstuxsmata"))
+			Expect(world.TranslatedName).To(Equal("The Cyclopean Realms"))
+
+		})
+
 	})
 })
