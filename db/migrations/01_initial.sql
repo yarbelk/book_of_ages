@@ -1,12 +1,13 @@
 -- +migrate Up
 CREATE TABLE IF NOT EXISTS worlds (
-	id INT PRIMARY KEY,
-	name TEXT
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	name TEXT,
+  translated_name TEXT
 );
 
 CREATE TABLE IF NOT EXISTS regions (
-	id INT,
-	world_id INT,
+	id INTEGER,
+	world_id INTEGER,
 	name TEXT,
 	type TEXT,
 	PRIMARY KEY(id, world_id),
@@ -14,8 +15,8 @@ CREATE TABLE IF NOT EXISTS regions (
 );
 
 CREATE TABLE IF NOT EXISTS underground_regions (
-	id INT,
-	world_id INT,
+	id INTEGER,
+	world_id INTEGER,
 	name TEXT,
 	type TEXT,
 	PRIMARY KEY(id, world_id),
@@ -23,11 +24,11 @@ CREATE TABLE IF NOT EXISTS underground_regions (
 );
 
 CREATE TABLE IF NOT EXISTS sites (
-	id INT,
-	world_id INT,
+	id INTEGER,
+	world_id INTEGER,
 	name TEXT,
-	x_coord INT,
-	y_coord INT,
+	x_coord INTEGER,
+	y_coord INTEGER,
   type TEXT,
 	PRIMARY KEY(id, world_id),
 	FOREIGN KEY(world_id) REFERENCES worlds(id)
@@ -35,8 +36,8 @@ CREATE TABLE IF NOT EXISTS sites (
 
 
 CREATE TABLE IF NOT EXISTS artifacts (
-	id INT,
-	world_id INT,
+	id INTEGER,
+	world_id INTEGER,
 	name TEXT,
 	item TEXT,
 	PRIMARY KEY(id, world_id),

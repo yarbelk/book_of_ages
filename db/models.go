@@ -24,14 +24,14 @@ Tables are:
 */
 
 type Region struct {
-	Id int `xml:"id" db:"id"`
+	Id int `xml:"id" db:"id, primarykey, autoincrement"`
 	World int `db:"world_id"`
 	Name string `xml:"name" db:"name"`
 	Type string `xml:"type" db:"type"`
 }
 
 type UndergroundRegion struct {
-	Id int `xml:"id" db:"id"`
+	Id int `xml:"id" db:"id,primarykey,autoincrement"`
 	World int `db:"world_id"`
 	Type string `xml:"type"`
 	Depth int `xml:"depth"`
@@ -39,7 +39,7 @@ type UndergroundRegion struct {
 
 
 type Site struct {
-	Id int `xml:"id" db:"id"`
+	Id int `xml:"id" db:"id, primarykey, autoincrement"`
 	World int `db:"world_id"`
 	Name string `xml:"name" db:"name"`
 	Coords string `xml:"coords"`
@@ -49,21 +49,20 @@ type Site struct {
 }
 
 type Artifact struct {
-	Id int `xml:"id" db:"id"`
+	Id int `xml:"id" db:"id, primarykey, autoincrement"`
 	World int `db:"world_id"`
 	Name string `xml:"name" db:"name"`
 	Item string `xml:"item" db:"item"`
 }
 
 type World struct {
-	XMLName xml.Name `xml:"df_world"`
 	Id int `db:"id"`
 	Name string `db:"name"`
 	TranslatedName string `db:"translated_name"`
-	Regions []Region
-	UndergroundRegions []UndergroundRegion
-	SiteList []Site `xml:"sites"`
-	ArtifactList []Artifact `xml:"artifacts"`
+	Regions []Region `db:"-"`
+	UndergroundRegions []UndergroundRegion `db:"-"`
+	SiteList []Site `xml:"sites" db:"-"`
+	ArtifactList []Artifact `xml:"artifacts" db:"-"`
 }
 
 type Modeler interface {

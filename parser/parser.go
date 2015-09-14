@@ -32,9 +32,10 @@ func Parse(world *World, inputXML io.Reader) {
 
 
 func parseRegion(decoder *xml.Decoder) {
+	var err error
+	var region *Region
 	for {
-		var err error
-		var region *Region = &Region{}
+		region = &Region{}
 		err = region.Decode(decoder)
 		if err != nil {
 			if err.Error() == "Wrong Tag Type" {
@@ -46,9 +47,10 @@ func parseRegion(decoder *xml.Decoder) {
 }
 
 func parseUndergroundRegion(decoder *xml.Decoder) {
+	var err error
+	var underground_region *UndergroundRegion
 	for {
-		var err error
-		var underground_region *UndergroundRegion = &UndergroundRegion{}
+		underground_region = &UndergroundRegion{}
 		err = underground_region.Decode(decoder)
 		if err != nil {
 			if err.Error() == "Wrong Tag Type" {
