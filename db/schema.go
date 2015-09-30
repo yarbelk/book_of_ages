@@ -52,6 +52,8 @@ func InitDb() *gorp.DbMap {
 	dbmap.AddTableWithName(World{}, "worlds").SetKeys(true, "Id")
 	dbmap.AddTableWithName(Region{}, "regions").SetKeys(true, "Id")
 	dbmap.AddTableWithName(UndergroundRegion{}, "underground_regions").SetKeys(true, "Id")
+	dbmap.AddTableWithName(Artifact{}, "artifacts").SetKeys(true, "Id")
+	dbmap.AddTableWithName(HistoricalFigure{}, "historical_figures").SetKeys(true, "Id")
 
 	return dbmap
 }

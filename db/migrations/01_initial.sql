@@ -6,41 +6,51 @@ CREATE TABLE IF NOT EXISTS worlds (
 );
 
 CREATE TABLE IF NOT EXISTS regions (
-	id INTEGER,
+	id INTEGER PRIMARY KEY,
 	world_id INTEGER,
 	name TEXT,
 	type TEXT,
-	PRIMARY KEY(id, world_id),
 	FOREIGN KEY(world_id) REFERENCES worlds(id)
 );
 
 CREATE TABLE IF NOT EXISTS underground_regions (
-	id INTEGER,
+	id INTEGER PRIMARY KEY,
 	world_id INTEGER,
 	name TEXT,
 	type TEXT,
-	PRIMARY KEY(id, world_id),
 	FOREIGN KEY(world_id) REFERENCES worlds(id)
 );
 
 CREATE TABLE IF NOT EXISTS sites (
-	id INTEGER,
+	id INTEGER PRIMARY KEY,
 	world_id INTEGER,
 	name TEXT,
 	x_coord INTEGER,
 	y_coord INTEGER,
   type TEXT,
-	PRIMARY KEY(id, world_id),
 	FOREIGN KEY(world_id) REFERENCES worlds(id)
 );
 
 
 CREATE TABLE IF NOT EXISTS artifacts (
-	id INTEGER,
+	id INTEGER PRIMARY KEY,
 	world_id INTEGER,
 	name TEXT,
 	item TEXT,
-	PRIMARY KEY(id, world_id),
+	FOREIGN KEY(world_id) REFERENCES worlds(id)
+);
+
+CREATE TABLE IF NOT EXISTS historical_figures (
+	id INTEGER PRIMARY KEY,
+	world_id INTEGER,
+	name TEXT,
+	race TEXT,
+	cast TEXT,
+  appeared INTEGER,
+  birth_year INTEGER,
+  death_year INTEGER,
+  associated_type TEXT,
+
 	FOREIGN KEY(world_id) REFERENCES worlds(id)
 );
 
@@ -51,3 +61,4 @@ DROP TABLE IF EXISTS regions;
 DROP TABLE IF EXISTS underground_regions;
 DROP TABLE IF EXISTS sites;
 DROP TABLE IF EXISTS artifacts;
+DROP TABLE IF EXISTS historical_figures;

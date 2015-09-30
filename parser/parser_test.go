@@ -8,6 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 	"strings"
 	"encoding/xml"
+	"fmt"
 )
 
 var _ = Describe("Parser", func() {
@@ -61,6 +62,40 @@ var _ = Describe("Parser", func() {
 			Expect(artifact.Item).To(Equal("okbodaztong"))
 
 		})
+	})
+
+	Context("a female dwarf brewer that is dead", func() {
+		It("should populate Name and ID", func() {
+			dwarf_entity := `
+		<historical_figure>
+		  <id>20761</id>
+		  <name>vabok combineportal</name>
+		  <race>DWARF</race>
+		  <caste>FEMALE</caste>
+		  <appeared>103</appeared>
+		  <birth_year>19</birth_year>
+		  <birth_seconds72>-1</birth_seconds72>
+		  <death_year>107</death_year>
+		  <death_seconds72>-1</death_seconds72>
+		  <associated_type>BREWER</associated_type>
+		  <hf_skill>
+			<skill>BREWING</skill>
+			<total_ip>12500</total_ip>
+		  </hf_skill>
+		</historical_figure>
+		`
+			reader := strings.NewReader(dwarf_entity)
+			figure := HistoricalFigure{}
+			decoder := xml.NewDecoder(reader)
+			figure.Decode(decoder)
+			fmt.Printf("%v\n", figure)
+			Expect(figure.Id).To(Equal(20761))
+			Expect(figure.Name).To(Equal("vabok combineportal"))
+
+
+		})
+
+
 	})
 
 	Context("world gen history txt file", func() {

@@ -24,14 +24,14 @@ Tables are:
 */
 
 type Region struct {
-	Id int `xml:"id" db:"id, primarykey, autoincrement"`
+	Id int `xml:"id" db:"id, primarykey"`
 	World int `db:"world_id"`
 	Name string `xml:"name" db:"name"`
 	Type string `xml:"type" db:"type"`
 }
 
 type UndergroundRegion struct {
-	Id int `xml:"id" db:"id,primarykey,autoincrement"`
+	Id int `xml:"id" db:"id,primarykey"`
 	World int `db:"world_id"`
 	Type string `xml:"type"`
 	Depth int `xml:"depth"`
@@ -39,7 +39,7 @@ type UndergroundRegion struct {
 
 
 type Site struct {
-	Id int `xml:"id" db:"id, primarykey, autoincrement"`
+	Id int `xml:"id" db:"id, primarykey"`
 	World int `db:"world_id"`
 	Name string `xml:"name" db:"name"`
 	Coords string `xml:"coords"`
@@ -49,7 +49,7 @@ type Site struct {
 }
 
 type Artifact struct {
-	Id int `xml:"id" db:"id, primarykey, autoincrement"`
+	Id int `xml:"id" db:"id, primarykey"`
 	World int `db:"world_id"`
 	Name string `xml:"name" db:"name"`
 	Item string `xml:"item" db:"item"`
@@ -65,17 +65,30 @@ type World struct {
 	ArtifactList []Artifact `xml:"artifacts" db:"-"`
 }
 
+type HistoricalFigure struct {
+	Id int `xml:"id" db:"id, primarykey"`
+	Name string `xml:"name" db:"name"`
+	Race string `xml:"race" db:"race"`
+	Cast string `xml:"cast" db:"cast"`
+	Appeared int `xml:"appeared" db:"appeared"`
+	BirthYear int `xml:"birth_year" db:"birth_year"`
+	DeathYear int `xml:"death_year" db:"death_year"`
+	AssociatedType string `xml:"associated_type" db:"associated_type"`
+}
+
 type Modeler interface {
 	Decode(decoder *xml.Decoder) error
 	Value() interface{}
 }
 
 func decodeXml(decoder *xml.Decoder, model Modeler, parent_tag, tag string) error {
+	fmt.Printf("%v\n", parent_tag)
 	token, err := decoder.Token()
 	if err != nil {
 		fmt.Printf("%s\n", err.Error())
 		return err
 	}
+	fmt.Printf("got token: %v\n", token)
 	switch startElement := token.(type) {
 		case xml.EndElement:
 			if startElement.Name.Local == parent_tag {
@@ -83,7 +96,12 @@ func decodeXml(decoder *xml.Decoder, model Modeler, parent_tag, tag string) erro
 			}
 		case xml.StartElement:
 			if startElement.Name.Local == tag {
-				decoder.DecodeElement(model, &startElement)
+			    fmt.Printf("%v\n", token.(xml.StartElement).Copy().Name)
+				err = decoder.DecodeElement(model, &startElement)
+				if err != nil {
+					fmt.Printf("Decode failed: %v\n", err.Error())
+					return err
+				}
 				return nil
 			} else {
 			return errors.New("Wrong Tag Type")
@@ -133,4 +151,12 @@ func (artifact *Artifact) Decode(decoder *xml.Decoder) error {
 
 func (artifact *Artifact) Value() (interface {}) {
 	return artifact
+}
+
+func (historical_figure *HistoricalFigure) Decode(decoder *xml.Decoder) error {
+	return decodeXml(decoder, historical_figure, "historical_figures", "historical_figure")
+}
+
+func (historical_figure *HistoricalFigure) Value() (interface {}) {
+	return historical_figure
 }
