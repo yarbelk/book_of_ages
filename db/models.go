@@ -73,8 +73,8 @@ type HistoricalFigure struct {
 	Appeared int `xml:"appeared" db:"appeared"`
 	BirthYear int `xml:"birth_year" db:"birth_year"`
 	DeathYear int `xml:"death_year" db:"death_year"`
-	RawDeity *struct{} `xml:"deity" db:"-"`
 	Deity bool `xml:"-" db:"deity"`
+	Force bool `xml:"-" db:"force"`
 	AssociatedType string `xml:"associated_type" db:"associated_type"`
 }
 
@@ -154,12 +154,21 @@ func (artifact *Artifact) Value() (interface {}) {
 }
 
 func (historical_figure *HistoricalFigure) Decode(decoder *xml.Decoder) error {
-	err := decodeXml(decoder, historical_figure, "historical_figures", "historical_figure")
+	// Embed the HistoricalFigure with the helpers - this lets us keep our
+	// model clean
+	figure := &struct{
+		*HistoricalFigure
+		RawDeity *struct{} `xml:"deity" db:"-"`
+		RawForce *struct{} `xml:"force" db:"-"`
+	}{historical_figure, nil, nil}
+
+	err := decodeXml(decoder, figure, "historical_figures", "historical_figure")
 	if err != nil {
 		return err
 	}
 
-	historical_figure.Deity = historical_figure.RawDeity != nil
+	figure.Deity = figure.RawDeity != nil
+	figure.Force = figure.RawForce != nil
 	return nil
 }
 

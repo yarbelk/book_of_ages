@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS historical_figures (
   birth_year INTEGER,
   death_year INTEGER,
   associated_type TEXT,
+  deity BOOLEAN,
+  force BOOLEAN,
 
 	FOREIGN KEY(world_id) REFERENCES worlds(id)
 );

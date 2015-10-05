@@ -89,6 +89,7 @@ var _ = Describe("Parser", func() {
 				Expect(figure.Deity).To(BeTrue())
 			})
 		})
+
 		Context("and is not a god", func() {
 			It("should populate Name and ID", func() {
 				dwarf_entity := "<historical_figure> <id>20761</id> <name>vabok combineportal</name> <race>DWARF</race> <caste>FEMALE</caste> <appeared>103</appeared> <birth_year>19</birth_year> <birth_seconds72>-1</birth_seconds72> <death_year>-1</death_year> <death_seconds72>-1</death_seconds72> <associated_type>BREWER</associated_type> <hf_skill> <skill>BREWING</skill> <total_ip>12500</total_ip> </hf_skill> </historical_figure>"
@@ -99,6 +100,32 @@ var _ = Describe("Parser", func() {
 				Expect(figure.Id).To(Equal(20761))
 				Expect(figure.Name).To(Equal("vabok combineportal"))
 				Expect(figure.Deity).To(BeFalse())
+			})
+		})
+
+		Context("and is a force", func() {
+			It("should populate Name and ID", func() {
+				dwarf_entity := "<historical_figure> <id>20761</id> <force /> <name>vabok combineportal</name> <race>DWARF</race> <caste>FEMALE</caste> <appeared>103</appeared> <birth_year>19</birth_year> <birth_seconds72>-1</birth_seconds72> <death_year>-1</death_year> <death_seconds72>-1</death_seconds72> <associated_type>BREWER</associated_type> <hf_skill> <skill>BREWING</skill> <total_ip>12500</total_ip> </hf_skill></historical_figure>"
+				reader := strings.NewReader(dwarf_entity)
+				figure := HistoricalFigure{}
+				decoder := xml.NewDecoder(reader)
+				figure.Decode(decoder)
+				Expect(figure.Id).To(Equal(20761))
+				Expect(figure.Name).To(Equal("vabok combineportal"))
+				Expect(figure.Force).To(BeTrue())
+			})
+		})
+
+		Context("and is not a force", func() {
+			It("should populate Name and ID", func() {
+				dwarf_entity := "<historical_figure> <id>20761</id> <name>vabok combineportal</name> <race>DWARF</race> <caste>FEMALE</caste> <appeared>103</appeared> <birth_year>19</birth_year> <birth_seconds72>-1</birth_seconds72> <death_year>-1</death_year> <death_seconds72>-1</death_seconds72> <associated_type>BREWER</associated_type> <hf_skill> <skill>BREWING</skill> <total_ip>12500</total_ip> </hf_skill> </historical_figure>"
+				reader := strings.NewReader(dwarf_entity)
+				figure := HistoricalFigure{}
+				decoder := xml.NewDecoder(reader)
+				figure.Decode(decoder)
+				Expect(figure.Id).To(Equal(20761))
+				Expect(figure.Name).To(Equal("vabok combineportal"))
+				Expect(figure.Force).To(BeFalse())
 			})
 		})
 	})
