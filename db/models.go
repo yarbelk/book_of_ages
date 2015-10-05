@@ -69,10 +69,12 @@ type HistoricalFigure struct {
 	Id int `xml:"id" db:"id, primarykey"`
 	Name string `xml:"name" db:"name"`
 	Race string `xml:"race" db:"race"`
-	Cast string `xml:"cast" db:"cast"`
+	Caste string `xml:"caste" db:"caste"`
 	Appeared int `xml:"appeared" db:"appeared"`
 	BirthYear int `xml:"birth_year" db:"birth_year"`
 	DeathYear int `xml:"death_year" db:"death_year"`
+	RawDeity *struct{} `xml:"deity" db:"-"`
+	Deity bool `xml:"-" db:"deity"`
 	AssociatedType string `xml:"associated_type" db:"associated_type"`
 }
 
@@ -82,13 +84,12 @@ type Modeler interface {
 }
 
 func decodeXml(decoder *xml.Decoder, model Modeler, parent_tag, tag string) error {
-	fmt.Printf("%v\n", parent_tag)
 	token, err := decoder.Token()
 	if err != nil {
 		fmt.Printf("%s\n", err.Error())
 		return err
 	}
-	fmt.Printf("got token: %v\n", token)
+
 	switch startElement := token.(type) {
 		case xml.EndElement:
 			if startElement.Name.Local == parent_tag {
@@ -96,7 +97,6 @@ func decodeXml(decoder *xml.Decoder, model Modeler, parent_tag, tag string) erro
 			}
 		case xml.StartElement:
 			if startElement.Name.Local == tag {
-			    fmt.Printf("%v\n", token.(xml.StartElement).Copy().Name)
 				err = decoder.DecodeElement(model, &startElement)
 				if err != nil {
 					fmt.Printf("Decode failed: %v\n", err.Error())
@@ -154,7 +154,13 @@ func (artifact *Artifact) Value() (interface {}) {
 }
 
 func (historical_figure *HistoricalFigure) Decode(decoder *xml.Decoder) error {
-	return decodeXml(decoder, historical_figure, "historical_figures", "historical_figure")
+	err := decodeXml(decoder, historical_figure, "historical_figures", "historical_figure")
+	if err != nil {
+		return err
+	}
+
+	historical_figure.Deity = historical_figure.RawDeity != nil
+	return nil
 }
 
 func (historical_figure *HistoricalFigure) Value() (interface {}) {

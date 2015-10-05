@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS historical_figures (
 	world_id INTEGER,
 	name TEXT,
 	race TEXT,
-	cast TEXT,
+	caste TEXT,
   appeared INTEGER,
   birth_year INTEGER,
   death_year INTEGER,
